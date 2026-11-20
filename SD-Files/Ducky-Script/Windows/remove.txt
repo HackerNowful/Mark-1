@@ -1,0 +1,47 @@
+REM Remove Everything - Stop keylogger and delete files
+
+DELAY 3000
+GUI r
+DELAY 1000
+STRING powershell
+DELAY 1000
+ENTER
+DELAY 1000
+
+REM Stop keylogger job
+STRING Get-Job | Stop-Job -Force; Get-Job | Remove-Job -Force
+DELAY 1000
+ENTER
+DELAY 1000
+
+REM Remove Registry persistence
+STRING reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v WindowsUpdate /f
+DELAY 1000
+ENTER
+DELAY 1000
+
+REM Kill hidden PowerShell processes
+STRING Get-Process powershell | Where-Object { $_.StartTime -gt (Get-Date).AddHours(-1) } | Stop-Process -Force
+DELAY 1000
+ENTER
+DELAY 1000
+
+REM Delete script files
+STRING Remove-Item "$env:TEMP\logger" -Recurse -Force -ErrorAction SilentlyContinue
+DELAY 1000
+ENTER
+DELAY 500
+
+STRING Remove-Item "$env:TEMP\*.ps1" -Force -ErrorAction SilentlyContinue
+DELAY 1000
+ENTER
+DELAY 500
+
+STRING Write-Host "All components removed!" -ForegroundColor Green
+DELAY 1000
+ENTER
+DELAY 1000
+
+STRING exit
+DELAY 1000
+ENTER

